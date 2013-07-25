@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Recipes with Angular.js - Home</title>
+    <meta keywords="javascript, js, angular.js, angularjs, recipes with angular.js, recipes with angularjs, best practices, cookbook, tutorial, book">
+    <meta name="viewport" content="width=device-width">
+
+    <link rel="stylesheet" type="text/css" href="http://fdietz.github.io/recipes-with-angular-js/assets/application-3d31a5dee68025f2330af6fe592db752.css">
+  </head>
+    <body ng-app="RecipesApp">
+
+        <div class="contain-to-grid">
+          <nav class="top-bar">
+            <ul class="title-area">
+              <li class="name">
+                <h1><a href="/recipes-with-angular-js">Recipes with Angular.js <img src="http://fdietz.github.io/recipes-with-angular-js/assets/AngularJS-Shield-small-bae6bd402dcfc605a9eb14f6b2220eab.png" alt="" width="36" height="36"></a>  </h1>
+              </li>
+              <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+            </ul>
+
+            <section class="top-bar-section">
+              <ul class="left">
+                <li><a href="/recipes-with-angular-js/toc.html">Table of Contents</a></li>
+                <li><a href="/recipes-with-angular-js/about.html">About</a></li>
+              </ul>
+
+            </section>
+          </nav>
+        </div>
+
+      <div class="row">
+        <div class="large-12 columns">
+          <div class="row">
+  <div class="large-12 columns">
+    <!-- <h1>Welcome to Recipes with Angular.js</h1> -->
+    <p>A community project dedicated to collecting resources for the <a href="http://angularjs.org/">Angular.js</a> framework. You find here easy to follow cookbook style recipes for issues you are likely to face when working with Angular.js.</p>
+
+    <p><a href="http://angularjs.org/">Angular.js</a> is the superheroic Javascript MVW framework developed by Google.</p>
+  </div>
+</div>
+
+<br>
+
+<div class="row">
+  <div class="large-6 columns">
+    <h3>Latest Updates</h3>
+    <ul>
+      
+        
+          <li>
+            <a href="/recipes-with-angular-js/directives/changing-the-dom-in-response-to-user-actions.html">Changing the DOM in response to user actions</a>
+          </li>
+        
+      
+        
+          <li>
+            <a href="/recipes-with-angular-js/controllers/testing-controllers.html">Testing Controllers</a>
+          </li>
+        
+      
+        
+          <li>
+            <a href="/recipes-with-angular-js/controllers/sharing-models-between-nested-controllers.html">Sharing Models Between Nested Controllers</a>
+          </li>
+        
+      
+        
+          <li>
+            <a href="/recipes-with-angular-js/controllers/sharing-code-between-controllers-using-services.html">Sharing Code Between Controllers using Services</a>
+          </li>
+        
+      
+        
+          <li>
+            <a href="/recipes-with-angular-js/controllers/responding-to-scope-changes.html">Responding to Scope Changes</a>
+          </li>
+        
+      
+        
+      
+        
+          <li>
+            <a href="/recipes-with-angular-js/controllers/encapsulation-a-model-value-with-a-controller-function.html">Encapsulating a Model Value with a Controller Function</a>
+          </li>
+        
+      
+        
+          <li>
+            <a href="/recipes-with-angular-js/controllers/changing-a-model-value-with-a-controller-function.html">Changing a Model Value with a Controller Function</a>
+          </li>
+        
+      
+        
+          <li>
+            <a href="/recipes-with-angular-js/controllers/assigning-a-default-value-to-a-model.html">Assigning a Default Value to a Model</a>
+          </li>
+        
+      
+        
+      
+    </ul>
+  </div>
+
+  <div class="large-6 columns">
+    <div class="row panel">
+      <div class="large-12 columns">
+        <h3>Support me and buy the book!</h3>
+      </div>
+      <div class="large-4 columns">
+        <a href="https://leanpub.com/recipes-with-angular-js"><img src="http://fdietz.github.io/recipes-with-angular-js/assets/book-medium-13cf152f515853de250dbd9a69d914f5.png" alt="" width="200px"></a>
+      </div>
+      <div class="large-8 columns">
+        <h5>Recipes with Angular.js</h5>
+        <h5 class="subheader">Practical concepts and techniques for rapid web application development <span class="author">by <a href="mailto: fdietz@gmail.com">Frederik Dietz</a></span></h5>
+
+
+        <a class="button small" href="https://leanpub.com/recipes-with-angular-js">Learn More</a>
+        <div class="clearfix"></div>
+        <a class="button small success" href="https://leanpub.com/recipes-with-angular-js/purchases/new">Buy on Leanpub</a>
+        <a class="button small success" href="http://www.amazon.com/dp/B00DK95V48">Buy on Amazon</a>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="large-12 columns">
+    <h3>Search Recipes</h3>
+
+    <div id="search">
+      <form action="/search" method="get">
+        <input type="text" id="search-query" name="q" placeholder="Search for Recipes..." autocomplete="off">
+      </form>
+    </div>
+
+    <section id="search-results" style="display: none;">
+      <p>Search results</p>
+      <div class="entries">
+      </div>
+    </section>
+
+    
+      <script id="search-results-template" type="text/mustache">
+        {{#entries}}
+          <article>
+            <h3>
+              {{#date}}<small><time datetime="{{pubdate}}" pubdate>{{displaydate}}</time></small>{{/date}}
+              <a href="/recipes-with-angular-js{{url}}">{{title}}</a>
+            </h3>
+          </article>
+        {{/entries}}
+      </script>
+    
+  </div>
+</div>
+        </div>
+      </div>
+
+      <footer class="row">
+        <div class="large-12 columns">
+          <hr>
+          <div class="row">
+            <div class="large-6 columns">
+              <p>
+                Maintained by <a href="http://fdietz.de">Frederik Dietz</a>
+              </p>
+            </div>
+
+            <div class="large-6 columns text-right">
+              <p>All content licensed with <a href="http://creativecommons.org/">Creative Commons</a></p>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      <script type="text/javascript" src="http://fdietz.github.io/recipes-with-angular-js/assets/application-cf8d65fb75f8535f869950cf0ef38a5b.js"></script>
+      <script>
+        $(document).foundation();
+      </script>
+
+      <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-42557266-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+      </script>
+
+      <script type="text/javascript">
+        $(function() {
+          $('#search-query').lunrSearch({
+            indexUrl: '/recipes-with-angular-js/search.json',
+            results:  '#search-results',
+            entries:  '.entries',
+            template: '#search-results-template'
+          });
+        });
+      </script>
+    </body>
+</html>

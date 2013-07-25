@@ -1,0 +1,229 @@
+{
+  "entries": [
+    {
+      "title": "Recipes with Angular.js",
+      "url": "/about.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "   You can create an issue on Github in case you find errors in the existing recipes or have ideas for new ones.     New recipes are contributed by forking the repository and sending a pull request.  The original content of this site is based on my ebook Recipes with Angular.js. I'm currently working hard to release all chapters on this website in the coming weeks. If you like this site, please support me and buy the book!          Angular.js is an open-source Javascript MVC (Model-View-Controller) framework developed by Google. It gives Javascript developers a highly structured approach to developing rich browser-based applications which leads to very high productivity.                 If you are using Angular.js, or considering it, this cookbook provides easy to follow recipes for issues you are likely to face. Each recipe solves a specific problem and provides a solution and in-depth discussion of it.       "
+    },
+    {
+      "title": "Assigning a Default Value to a Model",
+      "url": "/controllers/assigning-a-default-value-to-a-model.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish to assign a default value to the scope in the controller’s context. Use the ng-controller directive in your template: Next, define the scope variable in your controller function: Depending on where you use the ng-controller directive, you define its assigned scope. The scope is hierarchical and follows the DOM node hierarchy. In our example, the value expression is correctly evaluated to some value, since value is set in the MyCtrl controller. Note that this would not work if the value expression were moved outside the controllers scope: In this case {{value}} will simply be not rendered at all due to the fact that expression evaluation in Angular.js is forgiving for undefined and null values."
+    },
+    {
+      "title": "Changing a Model Value with a Controller Function",
+      "url": "/controllers/changing-a-model-value-with-a-controller-function.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish to increment a model value by 1 using a controller function. Implement an increment function that changes the scope. This function can be directly called in an expression, in our example we use ng-init: The ng-init directive is executed on page load and calls the function incrementValue defined in MyCtrl. Functions are defined on the scope very similar to values but must be called with the familiar parenthesis syntax. Of course, it would have been possible to increment the value right inside of the expression with value = value +1 but imagine the function being much more complex! Moving this function into a controller separates our business logic from our declarative view template and we can easily write unit tests for it."
+    },
+    {
+      "title": "Encapsulating a Model Value with a Controller Function",
+      "url": "/controllers/encapsulation-a-model-value-with-a-controller-function.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish to retrieve a model via function (instead of directly accessing the scope from the template) that encapsulates the model value. Define a getter function that returns the model value. Then in the template we use an expression to call it: MyCtrl defines the getIncrementedValue function, which uses the current value and returns it incremented by one. One could argue that depending on the use case it would make more sense to use a filter. But there are use cases specific to the controllers behavior where a generic filter is not required."
+    },
+    {
+      "title": "Controllers - Table of Contents",
+      "url": "/controllers/index.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "Controllers in Angular provide the business logic to handle view behavior, for example responding to a user clicking a button or entering some text in a form. Additionally, controllers prepare the model for the view template. As a general rule, a controller should not reference or manipulate the DOM directly. This has the benefit of simplifying unit testing controllers."
+    },
+    {
+      "title": "Responding to Scope Changes",
+      "url": "/controllers/responding-to-scope-changes.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish to react on a model change to trigger some further actions. In our example we simple want to set another model value depending on the value we are listening to. Use the $watch function in your controller. In our example we use the text input value to print a friendly greeting. The value greeting will be changed whenever there’s a change to the name model and the value is not blank. The first argument name of the $watch function is actually an Angular expression, so you can use more complex expressions (for example: [value1, value2] | json) or even a Javascript function. In this case you need to return a string in the watcher function: The second argument is a function which gets called whenever the expression evaluation returns a different value. The first parameter is the new value and the second parameter the old value. Internally, this uses angular.equals to determine equality which means both objects or values pass the === comparison."
+    },
+    {
+      "title": "Sharing Code Between Controllers using Services",
+      "url": "/controllers/sharing-code-between-controllers-using-services.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish to share business logic between controllers. Utilise a Service to implement your business logic and use dependency injection to use this service in your controllers. The template shows access to a list of users from two controllers: The service and controller implementation in app.js implements a user service and the controllers set the scope initially: You can find the complete example on github. The factory method creates a singleton UserService, that returns two functions for retrieving all users and the first user only. The controllers get the UserService injected by adding it to the controller function as params. Using dependency injection here is quite nice for testing your controllers, since you can easily inject a UserService stub. The only downside is that you can’t minify the code from above without breaking it, since the injection mechanism relies on the exact string representation of UserService. It is therefore recommended to define dependencies using inline annotations, which keeps working even when minified: The syntax looks a bit funny, but since strings in arrays are not changed during the minification process it solves our problem. Note that you could change the parameter names of the function, since the injection mechanism relies on the order of the array definition only. Another way to achieve the same is using the $inject annotation: This requires you to use a temporary variable to call the $inject service. Again, you could change the function parameter names. You will most probably see both versions applied in apps using Angular."
+    },
+    {
+      "title": "Sharing Models Between Nested Controllers",
+      "url": "/controllers/sharing-models-between-nested-controllers.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish to share a model between a nested hierarchy of controllers. Use Javascript objects instead of primitives or direct $parent scope references. Our example template uses a controller MyCtrl and a nested controller MyNestedCtrl: The app.js file contains the controller definition and initializes the scope with some defaults: Play around with the various input fields and see how changes affect each other. All the default values are defined in MyCtrl which is the parent of MyNestedCtrl. When making changes in the first input field, the changes will be in sync with the other input fields bound to the name variable. They all share the same scope variable as long as they only read from the variable. If you change the nested value, a copy in the scope of the MyNestedCtrl will be created. From now on, changing the first input field will only change the nested input field which explicitly references the parent scope via $parent.name expression. The object-based value behaves differently in this regard. Whether you change the nested or the MyCtrl scopes input fields, the changes will stay in sync. In Angular, a scope prototypically inherits properties from a parent scope. Objects are therefore references and kept in sync. Whereas primitive types are only in sync as long they are not changed in the child scope. Generally I tend to not use $parent.name and instead always use objects to share model properties. If you use $parent.name the MyNestedCtrl not only requires certain model attributes but also a correct scope hierarchy to work with. Tip: The Chrome plugin Batarang simplifies debugging the scope hierarchy by showing you a tree of the nested scopes. It is awesome!"
+    },
+    {
+      "title": "Testing Controllers",
+      "url": "/controllers/testing-controllers.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish to unit test your business logic. Implement a unit test using Jasmine and the angular-seed project. Following our previous $watch recipe, this is how our spec would look. Jasmine specs use describe and it functions to group specs and beforeEach and afterEach to setup and teardown code. The actual expectation compares the greeting from the scope with our expectation Greetings Frederik. The scope and controller initialization is a bit more involved. We use inject to initialize the scope and controller as closely as possible to how our code would behave at runtime too. We can’t just initialize the scope as a Javascript object {} since we would then not be able to call $watch on it. Instead $rootScope.$new() will do the trick. Note that the $controller service requires MyCtrl to be available and uses an object notation to pass in dependencies. The $digest call is required in order to trigger a watch execution after we have changed the scope. We need to call $digest manually in our spec whereas at runtime Angular will do this for us automatically."
+    },
+    {
+      "title": "Changing the DOM in response to user actions",
+      "url": "/directives/changing-the-dom-in-response-to-user-actions.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish to change the CSS of an HTML element on a mouse click and encapsulate this behavior in a reusable component. Implement a directive my-widget that contains an example paragraph of text we want to style. We use a link function in our directive implementation to change the CSS of the paragraph. When clicking on the paragraph the background color changes to red. In the HTML document we use the new directive as an HTML element my-widget, which can be found in the Javascript code as myWidget again. The directive function returns a restriction and a link function. The restriction means that this directive can only be used as an HTML element and not for example an HTML attribute. If you want to use it as an HTML attribute, change the restrict to return A instead. The usage would then have to be adapted to: Whether you use the attribute or element mechanism will depend on your use case. Generally speaking one would use the element mechanism to define a custom reusable component. The attribute mechanism would be used whenever you want to “configure” some element or enhance it with more behavior. Other available options are using the directive as a class attribute or a comment. The directive method expects a function that can be used for initialization and injection of dependencies. The link function is much more interesting since it defines the actual behavior. The scope, the actual HTML element my-widget and the HTML attributes are passed as params. Note that this has nothing to do with Angular’s dependency injection mechanism. Ordering of the parameters is important! Firstly we select the paragraph element, which is a child of the my-widget element using Angular’s children() function as defined by element. In the second step we use jQuery to bind to the click event and modify the css property on click. This is of particular interest since we have a mixture of Angular element functions and jQuery here. In fact under the hood Angular will use jQuery in the children() function if it is defined and will fall back to jqLite (shipped with Angular) otherwise. You can find all supported methods in the API Reference of element. Following a slightly altered version of the code using jQuery only: In this case element is alreay a jQuery element and we can directly use the on function."
+    },
+    {
+      "title": "Directive-to-Directive Communication",
+      "url": "/directives/directive-to-directive-communication.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish a directive to communicate with another directive and augment each other’s behavior using a well-defined interface (API). We implement a directive basket with a controller function and two other directive orange and apple which “require” this controller. Our example starts with an apple and orange directive used as attributes. The basket directive manages an array to which one can add apples and oranges! And finally the apple and orange directives, which add themselves to the basket using the basket’s controller. If you hover with the mouse over the rendered text the console should print and the basket’s content. Basket is the example directive that demonstrates an API using the controller function, whereas the apple and orange directives augment the basket directive. They both define a dependency to the basket controller with the require attribute. The link function then gets basketCtrl injected. Note how the basket directive is defined as an HTML element and the apple and orange directives are defined as HTML attributes (the default for directives). This demonstrates the typical use case of a reusable component augmented by other directives. Now there might be other ways of passing data back and forth between directives - we have seen the different semantics of using the (isolated) context in directives in previous recipes - but what’s especially great about the controller is the clear API contract it lets you define."
+    },
+    {
+      "title": "Enabling/Disabling DOM Elements Conditionally",
+      "url": "/directives/enabling-disabling-dom-elements-conditionally.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish to disable a button depending on a checkbox state. Use the ng-disabled directive and bind its condition to the checkbox state. The ng-disabled directive is a direct translation from the disabled HTML attribute, without you needing to worry about browser incompatibilities. It is bound to the checked model using an attribute value as is the checkbox using the ng-model directive. In fact the checked attribute value is again an Angular expression. You could for example invert the logic and use !checked instead. This is just one example of a directive shipped with Angular. There are many others like for example ng-hide, ng-checked or ng-mouseenter and I encourage you go through the API Reference and explore all the directives Angular has to offer. In the next recipes we will focus on implementing directives."
+    },
+    {
+      "title": "Directives - Table of Contents",
+      "url": "/directives/index.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "Directives are one of the most powerful concepts in Angular since they let you invent new HTML elements specific to your application. This allows you to create reusable components which encapsulate complex DOM structures, stylesheets and even behavior."
+    },
+    {
+      "title": "Passing Configuration Params Using HTML Attributes",
+      "url": "/directives/passing-configuration-params-using-html-attributes.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish to pass a configuration param to change the rendered output. Use the attribute-based directive and pass an attribute value for the configuration. The attribute is passed as a parameter to the link function. This renders a paragraph with the text passed as the param. The link function has access to the element and its attributes. It is therefore straightforward to set the scope to the text passed as the attributes value and use this in the template evaluation. The scope context is important though. The text model we changed might already be defined in the parent scope and used in another part of your app. In order to isolate the context and thereby use it only locally inside your directive, we have to return an additional scope attribute. In Angular this is called an isolate scope. It does not prototypically inherit from the parent scope and is especially useful when creating reusable components. Let’s look into another way of passing params to the directive. This time we will define an HTML element my-widget2. The scope definition using @text is binding the text model to the directive’s attribute. Note that any changes to the parent scope text will change the local scope text, but not the other way around. If you want instead to have a bi-directional binding between the parent scope and the local scope, you should use the = equality character: Changes to the local scope will also change the parent scope. Another option would be to pass an expression as a function to the directive using the & character. We pass the attribute fn to the directive and since the local scope defines fn accordingly we can call the function in the linkFunction and pass in the expression arguments as a hash."
+    },
+    {
+      "title": "Rendering a Directive's DOM Node Children",
+      "url": "/directives/rendering-a-directives-dom-node-children.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "Your widget uses the child nodes of the directive element to create a combined rendering. Use the transclude attribute together with the ng-transclude directive. This will render a div element containing an h3 element and append the directive’s child node with the paragraph element below. In this context, transclusion refers to the inclusion of a part of a document into another document by reference. The ng-transclude attribute should be positioned depending on where you want your child nodes to be appended."
+    },
+    {
+      "title": "Rendering an HTML Snippet in a Directive",
+      "url": "/directives/rendering-an-html-snippet-in-a-directive.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish to render an HTML snippet as a reusable component. Implement a directive and use the template attribute to define the HTML. This will render the Hello World paragraph as a child node of your my-widget element. If you want to replace the element entirely with the paragraph you will also have to return the replace attribute: Another option would be to use a file for the HTML snippet. In this case you will need to use the templateUrl attribute, for example as follows: The widget.html should reside in the same directory as the index.html file. This will only work if you use a web server to host the file. The example on Github uses angular-seed as bootstrap again."
+    },
+    {
+      "title": "Repeatedly Rendering Directive's DOM Node Children",
+      "url": "/directives/repeatedly-rendering-directives-dom-node-children.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish to render an HTML snippet repeatedly using the directive’s child nodes as the “stamp” content. Implement a compile function in your directive. This will render the header and paragraph 10 times. The directive repeats the child nodes as often as configured in the repeat attribute. It works similarly to the ng-repeat directive. The implementation uses Angular’s element methods to append the child nodes in a for loop. Note that the compile method only has access to the templates element tElement and template attributes. It has no access to the scope and you therefore can’t use $watch to add behavior either. This is in comparison to the link function that has access to the DOM “instance” (after the compile phase) and has access to the scope to add behavior. Use the compile function for template DOM manipulation only. Use the link function whenever you want to add behavior. Note that you can use both compile and link function combined. In this case the compile function must return the link function. As an example you want to react to a click on the header: Clicking the header will change the background color to red."
+    },
+    {
+      "title": "Testing Directives",
+      "url": "/directives/testing-directives.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish to test your directive with a unit test. As an example we will use a tab component directive implementation, which can easily be used in your HTML document. The directive implementation is split into the tabs and the pane directive. Let us start with the tabs directive. It manages a list of panes and the selected state of the panes. The template definition makes use of the selection to change the class and responds on the click event to change the selection. The pane directive depends on the tabs directive to add itself to it. Using the angular-seed in combination with jasmine and jasmine-jquery, you can implement a unit test. Combining jasmine with jasmine-jquery gives you useful assertions like toHaveClass and actions like click, which are used extensively in the example above. To prepare the template we use $compile and $digest in the beforeEach function and then access the resulting Angular element in our tests. The angular-seed project was slightly extended to add jquery and jasmine-jquery to the project. The example code was extracted from Vojta Jina’ Github example - the author of the awesome Testacular."
+    },
+    {
+      "title": "Home",
+      "url": "/index.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "A community project dedicated to collecting resources for the Angular.js framework. You find here easy to follow cookbook style recipes for issues you are likely to face when working with Angular.js. Angular.js is the superheroic Javascript MVW framework developed by Google. Search results"
+    },
+    {
+      "title": "Binding a Text Input to an Expression",
+      "url": "/introduction/binding-text-input-to-an-expression.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You want user input to be used in another part of your HTML page. Use Angulars ng-model directive to bind the text input to the expression. Assigning “name” to the ng-model attribute and using the name variable in an expression will keep both in sync automatically. Typing in the text input will automatically reflect these changes in the paragraph element below. Consider how you would implement this traditionally using jQuery: On document ready we bind to the keypress event in the text input and replace the text in the paragraph in the callback function. Using jQuery you need to deal with document ready callbacks, element selection, event binding and the context of this. Quite a lot of concepts to swallow and lines of code to maintain!"
+    },
+    {
+      "title": "Converting Expression Output with Filters",
+      "url": "/introduction/converting-expression-output-with-filters.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "When presenting data to the user, you might need to convert the data to a more user-friendly format. In our case we want to uppercase the name value from the previous recipe in the expression. Use the uppercase Angular filter. Angular uses the | (pipe) character to combine filters with variables in expressions. When evaluating the expression, the name variable is passed to the uppercase filter. This is similar to working with the Unix bash pipe symbol where an input can be transformed by another program. Also try the lowercase filter!"
+    },
+    {
+      "title": "Including the Angular.js Library Code in an HTML Page",
+      "url": "/introduction/including-the-angular-library-code-in-an-html-page.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish to use Angular.js on a web page. In order to get your first Angular.js app up and running you need to include the Angular Javascript file via script tag and make use of the ng-app directive. You can check out a complete example on github. Adding the ng-app directive tells Angular to kick in its magic. The expression 1 is evaluated by Angular and the result 3 is rendered. Note that removing ng-app will result in the browser rendering the expression as is instead of evaluating it. Play around with the expression! You can, for instance, concatenate Strings and invert or combine Boolean values."
+    },
+    {
+      "title": "Introduction - Table of Contents",
+      "url": "/introduction/index.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": ""
+    },
+    {
+      "title": "Responding to Click Events using Controllers",
+      "url": "/introduction/responding-to-click-events-using-controllers.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": "You wish to hide an HTML element on button click. Use the ng-hide directive in conjunction with a controller to change the visibility status on button click. And the controller in js/app.js: When toggling the button the “Hello World” paragraph will change its visibility. Using the ng-controller directive, we bind the div element including its children to the context of the MyCtrl controller. The ng-click directive will call the toggle() function of our controller on button click. Note that the ng-show directive is bound to the visible scope variable and will toggle the paragraph’s visibility accordingly. The controller implementation defaults the visible attribute to true and toggles its Boolean state in the toggle function. Both the visible variable and the toggle function are defined on the $scope service which is passed to all controller functions automatically via dependency injection. The next chapter will go into all the details of controllers in Angular. For now let us quickly discuss the MVVM (Model-View-ViewModel) pattern as used by Angular. In the MVVM pattern the model is plain Javascript, the view is the HTML template and the ViewModel is the glue between the template and the model. The ViewModel makes Angular’s two-way binding possible where changes in the model or the template are in sync automatically. In our example, the visible attribute is the model, but it could of course be much more complex , when for example retrieving data from a backend service. The controller is used to define the scope which represents the ViewModel. It interacts with the HTML template by binding the scope variable visible and the function toggle() to it."
+    },
+    {
+      "title": "Table of Contents",
+      "url": "/toc.html",
+      "date": null,
+      "categories": [
+
+      ],
+      "body": ""
+    }
+  ]
+}

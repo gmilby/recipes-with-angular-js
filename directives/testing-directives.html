@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Recipes with Angular.js - Testing Directives</title>
+    <meta keywords="javascript, js, angular.js, angularjs, recipes with angular.js, recipes with angularjs, best practices, cookbook, tutorial, book">
+    <meta name="viewport" content="width=device-width">
+
+    <link rel="stylesheet" type="text/css" href="http://fdietz.github.io/recipes-with-angular-js/assets/application-3d31a5dee68025f2330af6fe592db752.css">
+  </head>
+    <body ng-app="RecipesApp">
+
+        <div class="contain-to-grid">
+          <nav class="top-bar">
+            <ul class="title-area">
+              <li class="name">
+                <h1><a href="/recipes-with-angular-js">Recipes with Angular.js <img src="http://fdietz.github.io/recipes-with-angular-js/assets/AngularJS-Shield-small-bae6bd402dcfc605a9eb14f6b2220eab.png" alt="" width="36" height="36"></a>  </h1>
+              </li>
+              <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+            </ul>
+
+            <section class="top-bar-section">
+              <ul class="left">
+                <li><a href="/recipes-with-angular-js/toc.html">Table of Contents</a></li>
+                <li><a href="/recipes-with-angular-js/about.html">About</a></li>
+              </ul>
+
+            </section>
+          </nav>
+        </div>
+
+      <div class="row">
+        <div class="large-12 columns">
+          <ul class="breadcrumbs">
+  <li><a href="/recipes-with-angular-js">Home</a></li>
+  <li><a href="/recipes-with-angular-js/directives">directives</a></li>
+  <li class="current">Testing Directives</li>
+</ul>
+
+<div class="recipe-actions">
+  
+</div>
+
+<h2>Testing Directives</h2>
+
+<h3 id='problem'>Problem</h3>
+
+<p>You wish to test your directive with a unit test. As an example we will use a tab component directive implementation, which can easily be used in your HTML document.</p>
+<div>
+  <pre data-line=''><code class='language-markup'>&lt;tabs&gt;
+  &lt;pane title=&quot;First Tab&quot;&gt;First pane.&lt;/pane&gt;
+  &lt;pane title=&quot;Second Tab&quot;&gt;Second pane.&lt;/pane&gt;
+&lt;/tabs&gt;</code></pre>
+</div>
+<p>The directive implementation is split into the tabs and the pane directive. Let us start with the tabs directive.</p>
+<div>
+  <pre data-line=''><code class='language-javascript'>app.directive(&quot;tabs&quot;, function() {
+  return {
+    restrict: &quot;E&quot;,
+    transclude: true,
+    scope: {},
+    controller: function($scope, $element) {
+      var panes = $scope.panes = [];
+
+      $scope.select = function(pane) {
+        angular.forEach(panes, function(pane) {
+          pane.selected = false;
+        });
+        pane.selected = true;
+        console.log(&quot;selected pane: &quot;, pane.title);
+      };
+
+      this.addPane = function(pane) {
+        if (!panes.length) $scope.select(pane);
+        panes.push(pane);
+      };
+    },
+    template:
+      '&lt;div class=&quot;tabbable&quot;&gt;' +
+        '&lt;ul class=&quot;nav nav-tabs&quot;&gt;' +
+          '&lt;li ng-repeat=&quot;pane in panes&quot;' +
+              'ng-class=&quot;{active:pane.selected}&quot;&gt;'+
+            '&lt;a href=&quot;&quot; ng-click=&quot;select(pane)&quot;&gt;&lt;/a&gt;' +
+          '&lt;/li&gt;' +
+        '&lt;/ul&gt;' +
+        '&lt;div class=&quot;tab-content&quot; ng-transclude&gt;&lt;/div&gt;' +
+      '&lt;/div&gt;',
+    replace: true
+  };
+});</code></pre>
+</div>
+<p>It manages a list of <code>panes</code> and the selected state of the <code>panes</code>. The template definition makes use of the selection to change the class and responds on the click event to change the selection.</p>
+
+<p>The <code>pane</code> directive depends on the <code>tabs</code> directive to add itself to it.</p>
+<div>
+  <pre data-line=''><code class='language-javascript'>app.directive(&quot;pane&quot;, function() {
+  return {
+    require: &quot;^tabs&quot;,
+    restrict: &quot;E&quot;,
+    transclude: true,
+    scope: {
+      title: &quot;@&quot;
+    },
+    link: function(scope, element, attrs, tabsCtrl) {
+      tabsCtrl.addPane(scope);
+    },
+    template:
+      '&lt;div class=&quot;tab-pane&quot; ng-class=&quot;{active: selected}&quot;' +
+        'ng-transclude&gt;&lt;/div&gt;',
+    replace: true
+  };
+});</code></pre>
+</div>
+<h3 id='solution'>Solution</h3>
+
+<p>Using the angular-seed in combination with jasmine and jasmine-jquery, you can implement a unit test.</p>
+<div>
+  <pre data-line=''><code class='language-javascript'>describe('MyApp Tabs', function() {
+  var elm, scope;
+
+  beforeEach(module('MyApp'));
+
+  beforeEach(inject(function($rootScope, $compile) {
+    elm = angular.element(
+      '&lt;div&gt;' +
+        '&lt;tabs&gt;' +
+          '&lt;pane title=&quot;First Tab&quot;&gt;' +
+            'First content is ' +
+          '&lt;/pane&gt;' +
+          '&lt;pane title=&quot;Second Tab&quot;&gt;' +
+            'Second content is ' +
+          '&lt;/pane&gt;' +
+        '&lt;/tabs&gt;' +
+      '&lt;/div&gt;');
+
+    scope = $rootScope;
+    $compile(elm)(scope);
+    scope.$digest();
+  }));
+
+  it('should create clickable titles', function() {
+    console.log(elm.find('ul.nav-tabs'));
+    var titles = elm.find('ul.nav-tabs li a');
+
+    expect(titles.length).toBe(2);
+    expect(titles.eq(0).text()).toBe('First Tab');
+    expect(titles.eq(1).text()).toBe('Second Tab');
+  });
+
+  it('should set active class on title', function() {
+    var titles = elm.find('ul.nav-tabs li');
+
+    expect(titles.eq(0)).toHaveClass('active');
+    expect(titles.eq(1)).not.toHaveClass('active');
+  });
+
+  it('should change active pane when title clicked', function() {
+    var titles = elm.find('ul.nav-tabs li');
+    var contents = elm.find('div.tab-content div.tab-pane');
+
+    titles.eq(1).find('a').click();
+
+    expect(titles.eq(0)).not.toHaveClass('active');
+    expect(titles.eq(1)).toHaveClass('active');
+
+    expect(contents.eq(0)).not.toHaveClass('active');
+    expect(contents.eq(1)).toHaveClass('active');
+  });
+});</code></pre>
+</div>
+<h3 id='discussion'>Discussion</h3>
+
+<p>Combining jasmine with jasmine-jquery gives you useful assertions like <code>toHaveClass</code> and actions like <code>click</code>, which are used extensively in the example above.</p>
+
+<p>To prepare the template we use <code>$compile</code> and <code>$digest</code> in the <code>beforeEach</code> function and then access the resulting Angular element in our tests.</p>
+
+<p>The angular-seed project was slightly extended to add jquery and jasmine-jquery to the project.</p>
+
+<p>The example code was extracted from <a href='https://github.com/vojtajina/ng-directive-testing/tree/start'>Vojta Jina&#8217; Github example</a> - the author of the awesome <a href='https://github.com/testacular/testacular'>Testacular</a>.</p>
+
+<div class="panel radius similar-pages">
+  <h4>Similar Recipes</h4>
+  <ul>
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <li>
+          <a href="/recipes-with-angular-js/directives/changing-the-dom-in-response-to-user-actions.html">Changing the DOM in response to user actions</a>
+        </li>
+      
+    
+      
+        <li>
+          <a href="/recipes-with-angular-js/directives/directive-to-directive-communication.html">Directive-to-Directive Communication</a>
+        </li>
+      
+    
+      
+        <li>
+          <a href="/recipes-with-angular-js/directives/enabling-disabling-dom-elements-conditionally.html">Enabling/Disabling DOM Elements Conditionally</a>
+        </li>
+      
+    
+      
+    
+      
+        <li>
+          <a href="/recipes-with-angular-js/directives/passing-configuration-params-using-html-attributes.html">Passing Configuration Params Using HTML Attributes</a>
+        </li>
+      
+    
+      
+        <li>
+          <a href="/recipes-with-angular-js/directives/rendering-a-directives-dom-node-children.html">Rendering a Directive's DOM Node Children</a>
+        </li>
+      
+    
+      
+        <li>
+          <a href="/recipes-with-angular-js/directives/rendering-an-html-snippet-in-a-directive.html">Rendering an HTML Snippet in a Directive</a>
+        </li>
+      
+    
+      
+        <li>
+          <a href="/recipes-with-angular-js/directives/repeatedly-rendering-directives-dom-node-children.html">Repeatedly Rendering Directive's DOM Node Children</a>
+        </li>
+      
+    
+      
+        <li>
+          <a href="/recipes-with-angular-js/directives/testing-directives.html">Testing Directives</a>
+        </li>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </ul>
+</div>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'recipeswithangularjs'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        </div>
+      </div>
+
+      <footer class="row">
+        <div class="large-12 columns">
+          <hr>
+          <div class="row">
+            <div class="large-6 columns">
+              <p>
+                Maintained by <a href="http://fdietz.de">Frederik Dietz</a>
+              </p>
+            </div>
+
+            <div class="large-6 columns text-right">
+              <p>All content licensed with <a href="http://creativecommons.org/">Creative Commons</a></p>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      <script type="text/javascript" src="http://fdietz.github.io/recipes-with-angular-js/assets/application-cf8d65fb75f8535f869950cf0ef38a5b.js"></script>
+      <script>
+        $(document).foundation();
+      </script>
+
+      <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-42557266-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+      </script>
+
+      <script type="text/javascript">
+        $(function() {
+          $('#search-query').lunrSearch({
+            indexUrl: '/recipes-with-angular-js/search.json',
+            results:  '#search-results',
+            entries:  '.entries',
+            template: '#search-results-template'
+          });
+        });
+      </script>
+    </body>
+</html>
